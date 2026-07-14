@@ -1238,7 +1238,9 @@
   /* ── Pipe Puzzle ────────────────────────────────────────────────── */
   // 5x5 grid. Each cell has a pipe type (rotation cycles through variants).
   const PIPES = ['╠','╦','╔','╬','░']; // horizontal, vertical, corner, cross, empty
-  const PIPE_LABELS = { '╠':'━━', '╦':'┃', '╔':'┘', '╬':'+', '░':' ' };
+  // Minimum number of rotations the player must make before a win can be registered,
+  // preventing an accidental instant-win on the pre-filled default layout.
+  const MIN_PUZZLE_MOVES = 2;
 
   let puzzleGrid = [];
 
@@ -1296,7 +1298,7 @@
     // Simple win check: if middle row all non-empty → solved
     const midRow = puzzleGrid[2];
     const allFilled = midRow.every(cell => cell.isSource || cell.isSink || cell.type !== 4);
-    if (allFilled && state.puzzleMoves >= 2) {
+    if (allFilled && state.puzzleMoves >= MIN_PUZZLE_MOVES) {
       midRow.forEach(cell => { cell.correct = true; });
       state.puzzleSolved = true;
       renderPipeGrid();
@@ -1350,9 +1352,12 @@
     document.getElementById('decision-next-btn').style.display = 'block';
   }
 
+  // Points awarded per decision choice (A = unfavourable, B = best outcome, C = bold)
+  const DECISION_POINTS = { A: 80, B: 120, C: 100 };
+
   function completeDecision() {
     state.challenges.decision = true;
-    const pts = state.decisionChoice === 'A' ? 80 : state.decisionChoice === 'B' ? 120 : 100;
+    const pts = DECISION_POINTS[state.decisionChoice] ?? 80;
     state.missionScore += pts;
     goTo('s-hub');
     toast('Decision made! +' + pts + ' pts');
@@ -1420,7 +1425,7 @@
   }
 
   function updateBuilderStats() {
-    const pop = 2400;
+    const pop = parseInt((communities[currentCommunity]?.pop ?? '2400').replace(/,/g, '')) || 2400;
     const coverage = Math.min(100, Math.round(state.builderCapacity / pop * 100));
     state.builderCoverage = coverage;
 
