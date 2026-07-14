@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Drop Quest</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <main class="app">
+    <!-- Landing Screen -->
+    <section id="screen-landing" class="screen active" aria-labelledby="game-title">
+      <h1 id="game-title">💧 Drop Quest</h1>
+      <p class="tagline">Every drop builds a better future.</p>
+      <p class="description">
+        Help a village gain access to clean water by collecting water, gathering supplies,
+        and building life-changing systems before time runs out.
+      </p>
+      <div class="actions">
+        <button id="start-game-btn" class="primary-btn">Start Game</button>
+        <button id="how-to-play-btn" class="secondary-btn">How to Play</button>
+      </div>
+    </section>
+
+    <!-- How to Play Screen -->
+    <section id="screen-how-to-play" class="screen" aria-labelledby="how-to-play-title">
+      <h2 id="how-to-play-title">📘 How to Play</h2>
+      <ul>
+        <li>Collect water and resources for the village.</li>
+        <li>Use resources to build a well and filtration system.</li>
+        <li>Fill the clean-water meter before the timer reaches zero.</li>
+      </ul>
+      <button id="back-to-landing-btn" class="secondary-btn">Back</button>
+    </section>
+
+    <!-- Main Game Screen -->
+    <section id="screen-game" class="screen" aria-labelledby="village-name">
+      <h2 id="village-name">🏘️ Village: Hope Springs</h2>
+
+      <!-- Game stats -->
+      <div class="stats-grid">
+        <p><strong>Time:</strong> <span id="timer">60</span>s</p>
+        <p><strong>Score:</strong> <span id="score">0</span></p>
+        <p><strong>Water:</strong> <span id="water-count">0</span></p>
+        <p><strong>Resources:</strong> <span id="resource-count">0</span></p>
+      </div>
+
+      <!-- Clean-water progress meter -->
+      <div class="progress-wrap">
+        <label for="clean-water-progress">Clean-water meter</label>
+        <progress id="clean-water-progress" max="100" value="0">0%</progress>
+        <span id="progress-percent">0%</span>
+      </div>
+
+      <!-- Primary interaction -->
+      <button id="water-drop-btn" class="drop-btn">💧 Collect Water</button>
+
+      <!-- Resource and build actions -->
+      <div class="actions vertical">
+        <button id="collect-supplies-btn" class="secondary-btn">📦 Collect Supplies</button>
+        <button id="build-well-btn" class="primary-btn">🛠️ Build Well (10 resources)</button>
+        <button id="build-filtration-btn" class="primary-btn">🧪 Build Filtration System (15 resources)</button>
+      </div>
+
+      <!-- Status updates -->
+      <p id="status-message" class="status" aria-live="polite">
+        Collect water and supplies to help the village.
+      </p>
+    </section>
+
+    <!-- Win Screen -->
+    <section id="screen-win" class="screen" aria-labelledby="win-title">
+      <h2 id="win-title">✅ Mission Complete!</h2>
+      <p>The village now has access to clean water.</p>
+      <p><strong>Final score:</strong> <span id="win-score">0</span></p>
+      <p class="fact">
+        <strong>Water fact:</strong> Nearly 1 in 10 people worldwide still lack access to clean water close to home.
+      </p>
+      <button id="play-again-btn" class="primary-btn">Play Again</button>
+    </section>
+
+    <!-- Lose Screen -->
+    <section id="screen-lose" class="screen" aria-labelledby="lose-title">
+      <h2 id="lose-title">⏳ Time's Up</h2>
+      <p>You made progress—try again to bring clean water to the village.</p>
+      <p><strong>Final score:</strong> <span id="lose-score">0</span></p>
+      <button id="try-again-btn" class="primary-btn">Try Again</button>
+    </section>
+  </main>
+
+  <script src="./script.js"></script>
+</body>
+</html>
