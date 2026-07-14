@@ -4,6 +4,7 @@ const FILTRATION_COST = 15;
 const WELL_PROGRESS_GAIN = 40;
 const FILTRATION_PROGRESS_GAIN = 60;
 const GAME_DURATION_SECONDS = 60;
+const MAX_PROGRESS = 100;
 
 // Track mutable game state in one place
 const state = {
@@ -55,10 +56,10 @@ function showScreen(screenName) {
 
 // Keep all game numbers and button states in sync with state
 function render() {
-  timerEl.textContent = String(state.timer);
-  scoreEl.textContent = String(state.score);
-  waterCountEl.textContent = String(state.water);
-  resourceCountEl.textContent = String(state.resources);
+  timerEl.textContent = `${state.timer}`;
+  scoreEl.textContent = `${state.score}`;
+  waterCountEl.textContent = `${state.water}`;
+  resourceCountEl.textContent = `${state.resources}`;
   progressEl.value = state.progress;
   progressPercentEl.textContent = `${state.progress}%`;
 
@@ -166,7 +167,7 @@ function buildWell() {
 
   state.resources -= WELL_COST;
   state.wellBuilt = true;
-  state.progress = Math.min(100, state.progress + WELL_PROGRESS_GAIN);
+  state.progress = Math.min(MAX_PROGRESS, state.progress + WELL_PROGRESS_GAIN);
   state.score += 20;
   setStatusMessage("Well built! Clean-water meter increased.");
   checkWinCondition();
@@ -181,7 +182,7 @@ function buildFiltrationSystem() {
 
   state.resources -= FILTRATION_COST;
   state.filtrationBuilt = true;
-  state.progress = Math.min(100, state.progress + FILTRATION_PROGRESS_GAIN);
+  state.progress = Math.min(MAX_PROGRESS, state.progress + FILTRATION_PROGRESS_GAIN);
   state.score += 30;
   setStatusMessage("Filtration system built! Water quality improved.");
   checkWinCondition();
@@ -190,7 +191,7 @@ function buildFiltrationSystem() {
 
 // End in a win once meter reaches 100%
 function checkWinCondition() {
-  if (state.progress >= 100) {
+  if (state.progress >= MAX_PROGRESS) {
     endGame(true);
   }
 }
