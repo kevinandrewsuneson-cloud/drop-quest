@@ -5,7 +5,7 @@ This repository contains a simple responsive wireframe prototype for **Drop Ques
 ## Open locally
 
 1. Clone or download this repository.
-2. Open `/home/runner/work/drop-quest/drop-quest/index.html` directly in any modern browser.
+2. Open `index.html` from the project folder directly in any modern browser.
 3. No install/build step is required.
 
 ## MVP features

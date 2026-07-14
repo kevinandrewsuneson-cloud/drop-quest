@@ -62,6 +62,11 @@ function render() {
   progressEl.value = state.progress;
   progressPercentEl.textContent = `${state.progress}%`;
 
+  updateButtonStates();
+}
+
+// Keep action button disabled states centralized
+function updateButtonStates() {
   buildWellBtn.disabled = state.wellBuilt || state.resources < WELL_COST || !state.gameActive;
   buildFiltrationBtn.disabled =
     state.filtrationBuilt || state.resources < FILTRATION_COST || !state.gameActive;
