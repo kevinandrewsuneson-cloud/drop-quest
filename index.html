@@ -1,0 +1,1485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Drop Quest – MVP Wireframe Prototype</title>
+  <style>
+    /* ── Reset & tokens ─────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #f4f4f4;
+      --surface:   #ffffff;
+      --border:    #999;
+      --border-dk: #444;
+      --accent:    #1a73e8;
+      --accent-lt: #d2e3fc;
+      --danger:    #c5221f;
+      --success:   #188038;
+      --warn:      #e37400;
+      --text:      #111;
+      --muted:     #666;
+      --radius:    6px;
+      --shadow:    0 2px 8px rgba(0,0,0,.12);
+    }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* ── Screen container ───────────────────────────────────────────── */
+    .screen {
+      display: none;
+      width: 100%;
+      max-width: 820px;
+      min-height: 100vh;
+      padding: 24px 20px;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .screen.active { display: flex; }
+
+    /* ── Common UI pieces ───────────────────────────────────────────── */
+    .card {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      box-shadow: var(--shadow);
+    }
+
+    h1 { font-size: 2rem; }
+    h2 { font-size: 1.4rem; }
+    h3 { font-size: 1.1rem; }
+    p  { line-height: 1.55; color: var(--muted); }
+
+    .tag {
+      display: inline-block;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-size: .78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+    .tag.red    { border-color: var(--danger); color: var(--danger); }
+    .tag.green  { border-color: var(--success); color: var(--success); }
+    .tag.orange { border-color: var(--warn);   color: var(--warn); }
+    .tag.blue   { border-color: var(--accent);  color: var(--accent); }
+
+    /* buttons */
+    .btn {
+      display: inline-block;
+      cursor: pointer;
+      border: 1.5px solid var(--border-dk);
+      border-radius: var(--radius);
+      padding: 10px 22px;
+      font-size: .95rem;
+      font-weight: 600;
+      background: var(--surface);
+      color: var(--text);
+      text-align: center;
+      transition: background .15s, color .15s;
+    }
+    .btn:hover { background: #e8e8e8; }
+    .btn.primary {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+    .btn.primary:hover { background: #1558b0; }
+    .btn.danger {
+      background: var(--danger);
+      color: #fff;
+      border-color: var(--danger);
+    }
+    .btn.danger:hover { background: #a01916; }
+    .btn.success {
+      background: var(--success);
+      color: #fff;
+      border-color: var(--success);
+    }
+    .btn.success:hover { background: #0f5c27; }
+    .btn.sm { padding: 6px 14px; font-size: .85rem; }
+    .btn.wide { width: 100%; }
+    .btn:disabled { opacity: .45; cursor: not-allowed; }
+
+    /* nav bar */
+    .topbar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 0;
+      border-bottom: 1.5px solid var(--border);
+    }
+    .topbar .back { cursor: pointer; font-size: 1.2rem; }
+    .topbar .title { font-weight: 700; font-size: 1rem; flex: 1; }
+    .topbar .step { font-size: .8rem; color: var(--muted); }
+
+    /* resource strip */
+    .resources {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .resource {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 6px 12px;
+      font-size: .9rem;
+      font-weight: 600;
+    }
+    .resource .icon { font-size: 1.1rem; }
+
+    /* progress bar */
+    .progress-bar-wrap {
+      background: #ddd;
+      border-radius: 20px;
+      height: 12px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      border-radius: 20px;
+      background: var(--accent);
+      transition: width .3s;
+    }
+
+    /* grid helpers */
+    .row { display: flex; gap: 12px; flex-wrap: wrap; }
+    .col { flex: 1; min-width: 180px; }
+
+    /* ── SCREEN 0 – HOME ────────────────────────────────────────────── */
+    #s-home {
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      gap: 24px;
+    }
+    #s-home .logo-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    #s-home .drop-icon { font-size: 5rem; }
+    #s-home h1 { font-size: 2.6rem; letter-spacing: -.02em; }
+    #s-home .tagline { font-size: 1.05rem; max-width: 440px; color: var(--muted); }
+    #s-home .actions { display: flex; flex-direction: column; gap: 10px; width: 260px; }
+    .wireframe-note {
+      font-size: .78rem;
+      color: var(--muted);
+      border: 1px dashed var(--border);
+      border-radius: 4px;
+      padding: 6px 10px;
+      text-align: left;
+    }
+
+    /* ── SCREEN 1 – PLAYER SETUP ────────────────────────────────────── */
+    .role-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+      gap: 10px;
+    }
+    .role-card {
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px;
+      cursor: pointer;
+      text-align: center;
+      transition: border-color .15s, background .15s;
+    }
+    .role-card:hover { border-color: var(--accent); background: var(--accent-lt); }
+    .role-card.selected { border-color: var(--accent); background: var(--accent-lt); }
+    .role-card .role-icon { font-size: 2rem; }
+    .role-card .role-name { font-weight: 700; margin: 6px 0 2px; }
+    .role-card .role-desc { font-size: .78rem; color: var(--muted); }
+
+    input[type=text] {
+      width: 100%;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 10px 12px;
+      font-size: 1rem;
+      outline: none;
+    }
+    input[type=text]:focus { border-color: var(--accent); }
+
+    /* ── SCREEN 2 – WORLD MAP ───────────────────────────────────────── */
+    .map-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    .map-pin {
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px;
+      cursor: pointer;
+      position: relative;
+      background: var(--surface);
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .map-pin:hover { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-lt); }
+    .map-pin.locked { opacity: .5; cursor: not-allowed; }
+    .map-pin.completed { border-color: var(--success); }
+    .map-pin .pin-icon { font-size: 1.8rem; }
+    .map-pin .pin-name { font-weight: 700; margin: 6px 0 2px; }
+    .map-pin .pin-region { font-size: .78rem; color: var(--muted); }
+    .map-pin .pin-badge {
+      position: absolute;
+      top: 8px; right: 8px;
+    }
+    .crisis-bar { margin-top: 8px; }
+    .crisis-label { font-size: .75rem; color: var(--muted); margin-bottom: 3px; }
+
+    /* ── SCREEN 3 – COMMUNITY BRIEF ─────────────────────────────────── */
+    .stat-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .stat-box {
+      flex: 1;
+      min-width: 120px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px;
+      text-align: center;
+    }
+    .stat-box .stat-val { font-size: 1.6rem; font-weight: 700; }
+    .stat-box .stat-lbl { font-size: .78rem; color: var(--muted); }
+
+    /* ── SCREEN 4 – MISSION HUB ─────────────────────────────────────── */
+    .challenge-list { display: flex; flex-direction: column; gap: 10px; }
+    .challenge-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      cursor: pointer;
+      background: var(--surface);
+      transition: border-color .15s, background .15s;
+    }
+    .challenge-item:hover { border-color: var(--accent); background: var(--accent-lt); }
+    .challenge-item.done { border-color: var(--success); background: #e6f4ea; }
+    .challenge-icon { font-size: 2rem; }
+    .challenge-info { flex: 1; }
+    .challenge-info .ch-name { font-weight: 700; }
+    .challenge-info .ch-desc { font-size: .82rem; color: var(--muted); margin-top: 2px; }
+    .challenge-reward { font-size: .82rem; font-weight: 700; color: var(--accent); }
+
+    /* ── SCREEN 5 – PIPE PUZZLE ─────────────────────────────────────── */
+    .pipe-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 60px);
+      grid-template-rows: repeat(5, 60px);
+      gap: 4px;
+      justify-content: center;
+    }
+    .pipe-cell {
+      width: 60px;
+      height: 60px;
+      border: 2px solid var(--border);
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      background: var(--surface);
+      transition: background .12s;
+      user-select: none;
+    }
+    .pipe-cell:hover { background: var(--accent-lt); }
+    .pipe-cell.source { background: #d2e3fc; border-color: var(--accent); }
+    .pipe-cell.sink   { background: #e6f4ea; border-color: var(--success); }
+    .pipe-cell.connected { background: #bee3f8; }
+    .pipe-cell.correct   { background: #c6f6d5; border-color: var(--success); }
+    .pipe-legend {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      font-size: .82rem;
+      color: var(--muted);
+    }
+    .pipe-legend span { display: flex; align-items: center; gap: 4px; }
+
+    /* ── SCREEN 6 – DECISION CHALLENGE ──────────────────────────────── */
+    .scenario-box {
+      border: 2px dashed var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      font-size: 1rem;
+      line-height: 1.6;
+      background: #fafafa;
+    }
+    .decision-options { display: flex; flex-direction: column; gap: 10px; }
+    .decision-opt {
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      cursor: pointer;
+      background: var(--surface);
+      transition: border-color .15s, background .15s;
+    }
+    .decision-opt:hover { border-color: var(--accent); background: var(--accent-lt); }
+    .decision-opt.selected-good { border-color: var(--success); background: #e6f4ea; }
+    .decision-opt.selected-bad  { border-color: var(--danger);  background: #fce8e6; }
+    .decision-opt .opt-text { font-weight: 600; }
+    .decision-opt .opt-effects {
+      margin-top: 6px;
+      font-size: .8rem;
+      color: var(--muted);
+      display: none;
+    }
+    .decision-opt.selected-good .opt-effects,
+    .decision-opt.selected-bad  .opt-effects { display: block; }
+    .consequence-banner {
+      display: none;
+      padding: 12px 16px;
+      border-radius: var(--radius);
+      font-weight: 600;
+    }
+    .consequence-banner.good { display: block; background: #e6f4ea; color: var(--success); }
+    .consequence-banner.bad  { display: block; background: #fce8e6; color: var(--danger); }
+
+    /* ── SCREEN 7 – WATER SYSTEM BUILDER ────────────────────────────── */
+    .builder-layout {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .component-palette {
+      flex: 0 0 160px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .palette-item {
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 10px;
+      cursor: grab;
+      background: var(--surface);
+      font-size: .85rem;
+      text-align: center;
+      transition: background .12s;
+    }
+    .palette-item:hover { background: var(--accent-lt); border-color: var(--accent); }
+    .palette-item .comp-icon { font-size: 1.4rem; display: block; margin-bottom: 4px; }
+    .palette-item .comp-cost { font-size: .72rem; color: var(--warn); font-weight: 700; }
+
+    .build-canvas {
+      flex: 1;
+      min-width: 300px;
+      border: 2px dashed var(--border);
+      border-radius: var(--radius);
+      background: #fafafa;
+      min-height: 320px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: repeat(4, 1fr);
+      gap: 0;
+      position: relative;
+    }
+    .canvas-slot {
+      border: 1px solid #e0e0e0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      cursor: pointer;
+      min-height: 75px;
+      transition: background .12s;
+    }
+    .canvas-slot:hover { background: var(--accent-lt); }
+    .canvas-slot.placed { background: #e8f5e9; cursor: default; }
+    .canvas-slot .slot-label { font-size: .65rem; color: var(--muted); display: block; }
+
+    .build-stats {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .build-stat {
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 8px 14px;
+      font-size: .85rem;
+      flex: 1;
+      min-width: 100px;
+      text-align: center;
+    }
+    .build-stat .bs-val { font-size: 1.2rem; font-weight: 700; }
+    .build-stat .bs-lbl { font-size: .72rem; color: var(--muted); }
+
+    /* ── SCREEN 8 – MISSION RESULTS ─────────────────────────────────── */
+    .result-score {
+      text-align: center;
+      padding: 24px;
+    }
+    .result-score .score-num { font-size: 4rem; font-weight: 700; color: var(--accent); }
+    .result-score .score-lbl { font-size: 1rem; color: var(--muted); }
+    .breakdown { display: flex; flex-direction: column; gap: 8px; }
+    .breakdown-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: .9rem;
+    }
+    .breakdown-row .br-icon { font-size: 1.2rem; width: 28px; text-align: center; }
+    .breakdown-row .br-label { flex: 1; }
+    .breakdown-row .br-points { font-weight: 700; color: var(--accent); }
+
+    /* ── SCREEN 9 – WORLD PROGRESS ──────────────────────────────────── */
+    .impact-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 10px;
+    }
+    .impact-card {
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      text-align: center;
+      background: var(--surface);
+    }
+    .impact-card .ic-icon { font-size: 2.2rem; }
+    .impact-card .ic-val  { font-size: 1.8rem; font-weight: 700; margin: 4px 0; }
+    .impact-card .ic-lbl  { font-size: .78rem; color: var(--muted); }
+
+    .leaderboard { display: flex; flex-direction: column; gap: 8px; }
+    .lb-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      font-size: .9rem;
+    }
+    .lb-row.you { border-color: var(--accent); background: var(--accent-lt); font-weight: 700; }
+    .lb-rank { width: 24px; font-weight: 700; color: var(--muted); }
+    .lb-name { flex: 1; }
+    .lb-score { font-weight: 700; }
+    .lb-badge { font-size: 1rem; }
+
+    /* ── HOW TO PLAY modal ──────────────────────────────────────────── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.4);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--surface);
+      border-radius: 8px;
+      padding: 24px;
+      max-width: 480px;
+      width: 90%;
+      box-shadow: 0 8px 32px rgba(0,0,0,.2);
+    }
+    .modal h2 { margin-bottom: 12px; }
+    .modal ol { padding-left: 20px; display: flex; flex-direction: column; gap: 8px; }
+    .modal li { font-size: .92rem; line-height: 1.5; color: var(--muted); }
+    .modal .close-btn { margin-top: 16px; }
+
+    /* ── Toast ──────────────────────────────────────────────────────── */
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: #222;
+      color: #fff;
+      padding: 10px 22px;
+      border-radius: 20px;
+      font-size: .9rem;
+      font-weight: 600;
+      transition: transform .3s;
+      z-index: 200;
+      pointer-events: none;
+    }
+    #toast.show { transform: translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════════════
+     SCREEN 0 – HOME
+═════════════════════════════════════════════════════════════ -->
+<div id="s-home" class="screen active">
+  <div class="wireframe-note">📐 <strong>Wireframe Prototype</strong> — navigation &amp; functionality demo. Click through all screens to explore the game loop.</div>
+  <div class="logo-block">
+    <div class="drop-icon">💧</div>
+    <h1>Drop Quest</h1>
+    <p class="tagline">Work with your team to bring clean water to communities around the world — solve challenges, build water systems, and make life-changing decisions.</p>
+  </div>
+  <div class="actions">
+    <button class="btn primary wide" onclick="goTo('s-setup')">▶ Start New Game</button>
+    <button class="btn wide" onclick="goTo('s-world')">🌍 Continue (Demo Save)</button>
+    <button class="btn wide" onclick="openModal('modal-how')">❓ How to Play</button>
+  </div>
+  <p style="font-size:.78rem;color:var(--muted);">Multiplayer coming soon — up to 4 players per team</p>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     SCREEN 1 – PLAYER SETUP
+═════════════════════════════════════════════════════════════ -->
+<div id="s-setup" class="screen">
+  <div class="topbar">
+    <span class="back" onclick="goTo('s-home')">← Back</span>
+    <span class="title">Player Setup</span>
+    <span class="step">Step 1 of 2</span>
+  </div>
+
+  <div class="card">
+    <h2 style="margin-bottom:10px">What's your name?</h2>
+    <input type="text" id="player-name" placeholder="Enter your name…" value="Alex" />
+  </div>
+
+  <div class="card">
+    <h2 style="margin-bottom:4px">Choose Your Role</h2>
+    <p style="margin-bottom:12px;font-size:.85rem">Each role has unique abilities that help the team.</p>
+    <div class="role-grid">
+      <div class="role-card selected" id="role-engineer" onclick="selectRole('engineer')">
+        <div class="role-icon">🔧</div>
+        <div class="role-name">Engineer</div>
+        <div class="role-desc">+25% build speed. Unlocks advanced pipe layouts.</div>
+      </div>
+      <div class="role-card" id="role-diplomat" onclick="selectRole('diplomat')">
+        <div class="role-icon">🤝</div>
+        <div class="role-name">Diplomat</div>
+        <div class="role-desc">Better decision outcomes. Gains trust bonuses.</div>
+      </div>
+      <div class="role-card" id="role-scientist" onclick="selectRole('scientist')">
+        <div class="role-icon">🔬</div>
+        <div class="role-name">Scientist</div>
+        <div class="role-desc">Reveals water quality data. Puzzle hints available.</div>
+      </div>
+      <div class="role-card" id="role-logistics" onclick="selectRole('logistics')">
+        <div class="role-icon">📦</div>
+        <div class="role-name">Logistics</div>
+        <div class="role-desc">+20% starting funds. Resource management bonuses.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 style="margin-bottom:8px">Difficulty</h2>
+    <div class="row">
+      <button class="btn selected-diff" id="diff-easy"   onclick="selectDiff('easy')"   style="flex:1;background:var(--accent-lt);border-color:var(--accent)">🌱 Easy</button>
+      <button class="btn" id="diff-normal" onclick="selectDiff('normal')" style="flex:1">⚡ Normal</button>
+      <button class="btn" id="diff-hard"   onclick="selectDiff('hard')"   style="flex:1">🔥 Hard</button>
+    </div>
+  </div>
+
+  <button class="btn primary wide" onclick="startGame()">Continue to World Map →</button>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     SCREEN 2 – WORLD MAP
+═════════════════════════════════════════════════════════════ -->
+<div id="s-world" class="screen">
+  <div class="topbar">
+    <span class="back" onclick="goTo('s-setup')">← Setup</span>
+    <span class="title">🌍 World Map</span>
+    <span class="step">3 missions active</span>
+  </div>
+
+  <div class="resources" id="world-resources">
+    <div class="resource"><span class="icon">💰</span><span id="res-funds">$8,200</span></div>
+    <div class="resource"><span class="icon">⚙️</span><span id="res-parts">42 parts</span></div>
+    <div class="resource"><span class="icon">⭐</span><span id="res-score">1,340 pts</span></div>
+  </div>
+
+  <div class="card" style="padding:12px">
+    <p style="font-size:.85rem">Select a community to begin a mission. Red = crisis, orange = at-risk, green = completed.</p>
+  </div>
+
+  <div class="map-grid">
+    <!-- Community 1 -->
+    <div class="map-pin" onclick="selectCommunity(0)">
+      <span class="pin-badge"><span class="tag red">Crisis</span></span>
+      <div class="pin-icon">🏜️</div>
+      <div class="pin-name">Kalahari Village</div>
+      <div class="pin-region">Sub-Saharan Africa</div>
+      <div class="crisis-bar">
+        <div class="crisis-label">Water crisis level</div>
+        <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:88%;background:var(--danger)"></div></div>
+      </div>
+    </div>
+    <!-- Community 2 -->
+    <div class="map-pin" onclick="selectCommunity(1)">
+      <span class="pin-badge"><span class="tag orange">At Risk</span></span>
+      <div class="pin-icon">⛰️</div>
+      <div class="pin-name">Andean Pueblo</div>
+      <div class="pin-region">South America</div>
+      <div class="crisis-bar">
+        <div class="crisis-label">Water crisis level</div>
+        <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:55%;background:var(--warn)"></div></div>
+      </div>
+    </div>
+    <!-- Community 3 -->
+    <div class="map-pin completed" onclick="selectCommunity(2)">
+      <span class="pin-badge"><span class="tag green">Done ✓</span></span>
+      <div class="pin-icon">🌾</div>
+      <div class="pin-name">Mekong Delta</div>
+      <div class="pin-region">Southeast Asia</div>
+      <div class="crisis-bar">
+        <div class="crisis-label">Water crisis level</div>
+        <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:10%;background:var(--success)"></div></div>
+      </div>
+    </div>
+    <!-- Community 4 -->
+    <div class="map-pin" onclick="selectCommunity(3)">
+      <span class="pin-badge"><span class="tag red">Crisis</span></span>
+      <div class="pin-icon">🏔️</div>
+      <div class="pin-name">Hindu Kush Camp</div>
+      <div class="pin-region">Central Asia</div>
+      <div class="crisis-bar">
+        <div class="crisis-label">Water crisis level</div>
+        <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:72%;background:var(--danger)"></div></div>
+      </div>
+    </div>
+    <!-- Community 5 – locked -->
+    <div class="map-pin locked">
+      <span class="pin-badge"><span class="tag">🔒 Locked</span></span>
+      <div class="pin-icon">🏝️</div>
+      <div class="pin-name">Pacific Atoll</div>
+      <div class="pin-region">Oceania</div>
+      <div class="crisis-bar">
+        <div class="crisis-label">Reach 3,000 pts to unlock</div>
+        <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:44%"></div></div>
+      </div>
+    </div>
+    <!-- Community 6 – locked -->
+    <div class="map-pin locked">
+      <span class="pin-badge"><span class="tag">🔒 Locked</span></span>
+      <div class="pin-icon">🏕️</div>
+      <div class="pin-name">Sahel Nomads</div>
+      <div class="pin-region">North Africa</div>
+      <div class="crisis-bar">
+        <div class="crisis-label">Complete 2 missions first</div>
+        <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:0%"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <button class="btn wide" onclick="goTo('s-progress')">📊 View World Impact</button>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     SCREEN 3 – COMMUNITY BRIEF
+═════════════════════════════════════════════════════════════ -->
+<div id="s-brief" class="screen">
+  <div class="topbar">
+    <span class="back" onclick="goTo('s-world')">← Map</span>
+    <span class="title" id="brief-title">Community Brief</span>
+  </div>
+
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:12px">
+      <span id="brief-icon" style="font-size:3rem">🏜️</span>
+      <div>
+        <h2 id="brief-name">Kalahari Village</h2>
+        <p id="brief-region" style="font-size:.85rem">Sub-Saharan Africa · Population ~2,400</p>
+      </div>
+    </div>
+    <p id="brief-desc">Drought conditions have reduced the village's only borehole to near-zero output. Women walk 14 km daily to collect contaminated water. Waterborne disease rates have tripled in 6 months.</p>
+  </div>
+
+  <div class="stat-row">
+    <div class="stat-box">
+      <div class="stat-val" id="brief-pop">2,400</div>
+      <div class="stat-lbl">Population</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-val" style="color:var(--danger)" id="brief-crisis">88%</div>
+      <div class="stat-lbl">Crisis Level</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-val" id="brief-budget">$3,500</div>
+      <div class="stat-lbl">Budget</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-val" id="brief-time">6 turns</div>
+      <div class="stat-lbl">Time Limit</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-bottom:8px">Mission Objectives</h3>
+    <div style="display:flex;flex-direction:column;gap:6px;font-size:.9rem">
+      <div>⬜ Solve the infrastructure puzzle to restore the borehole</div>
+      <div>⬜ Make the water-rights decision</div>
+      <div>⬜ Build a distribution system for 2,400 people</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-bottom:8px">Rewards</h3>
+    <div class="row" style="font-size:.88rem;gap:16px">
+      <span>💰 +$1,200 funds</span>
+      <span>⭐ +350 pts</span>
+      <span>🏅 "Water Hero" badge</span>
+    </div>
+  </div>
+
+  <button class="btn primary wide" onclick="goTo('s-hub')">Accept Mission →</button>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     SCREEN 4 – MISSION HUB
+═════════════════════════════════════════════════════════════ -->
+<div id="s-hub" class="screen">
+  <div class="topbar">
+    <span class="back" onclick="goTo('s-brief')">← Brief</span>
+    <span class="title">Mission Hub – <span id="hub-title">Kalahari Village</span></span>
+  </div>
+
+  <div class="resources">
+    <div class="resource"><span class="icon">💰</span><span id="hub-funds">$3,500</span></div>
+    <div class="resource"><span class="icon">⏱️</span><span>6 turns left</span></div>
+    <div class="resource"><span class="icon">🏆</span><span id="hub-pts">0 / 350 pts</span></div>
+  </div>
+
+  <div class="card">
+    <div class="progress-bar-wrap" style="height:8px;margin-bottom:4px">
+      <div class="progress-bar-fill" id="hub-progress" style="width:0%"></div>
+    </div>
+    <p style="font-size:.78rem">Mission progress: 0 of 3 challenges complete</p>
+  </div>
+
+  <div class="challenge-list">
+    <div class="challenge-item" id="ch-puzzle" onclick="goTo('s-puzzle')">
+      <span class="challenge-icon">🔩</span>
+      <div class="challenge-info">
+        <div class="ch-name">Pipe Puzzle — Restore the Borehole</div>
+        <div class="ch-desc">Connect the pipes from source to borehole within 5 moves.</div>
+      </div>
+      <span class="challenge-reward">+100 pts</span>
+    </div>
+    <div class="challenge-item" id="ch-decision" onclick="goTo('s-decision')">
+      <span class="challenge-icon">⚖️</span>
+      <div class="challenge-info">
+        <div class="ch-name">Decision — Water Rights Agreement</div>
+        <div class="ch-desc">Negotiate between the village council and the regional authority.</div>
+      </div>
+      <span class="challenge-reward">+120 pts</span>
+    </div>
+    <div class="challenge-item" id="ch-build" onclick="goTo('s-builder')">
+      <span class="challenge-icon">🏗️</span>
+      <div class="challenge-info">
+        <div class="ch-name">Build — Distribution System</div>
+        <div class="ch-desc">Place pumps, tanks, and pipes to serve all 2,400 residents.</div>
+      </div>
+      <span class="challenge-reward">+130 pts</span>
+    </div>
+  </div>
+
+  <button class="btn wide" onclick="goTo('s-world')" style="margin-top:auto">← Back to World Map</button>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     SCREEN 5 – PIPE PUZZLE
+═════════════════════════════════════════════════════════════ -->
+<div id="s-puzzle" class="screen">
+  <div class="topbar">
+    <span class="back" onclick="goTo('s-hub')">← Hub</span>
+    <span class="title">🔩 Pipe Puzzle</span>
+    <span class="step" id="puzzle-moves">Moves: 0 / 5</span>
+  </div>
+
+  <div class="card">
+    <p>Click a pipe cell to <strong>rotate</strong> it. Connect the <span style="color:var(--accent);font-weight:700">💧 Source</span> to the <span style="color:var(--success);font-weight:700">⛏ Borehole</span> to restore water flow.</p>
+  </div>
+
+  <div class="pipe-grid" id="pipe-grid"></div>
+
+  <div class="pipe-legend">
+    <span>╠═ Horizontal</span>
+    <span>╦  Vertical</span>
+    <span>╔  Corner</span>
+    <span>╬  Cross</span>
+  </div>
+
+  <div id="puzzle-feedback" style="display:none" class="card">
+    <p id="puzzle-msg" style="font-weight:600;color:var(--success)">🎉 Water is flowing! Puzzle complete.</p>
+  </div>
+
+  <div class="row" style="gap:10px">
+    <button class="btn" onclick="resetPuzzle()" style="flex:1">↺ Reset</button>
+    <button class="btn primary" id="puzzle-next-btn" style="flex:2;display:none" onclick="completePuzzle()">Next Challenge →</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     SCREEN 6 – DECISION CHALLENGE
+═════════════════════════════════════════════════════════════ -->
+<div id="s-decision" class="screen">
+  <div class="topbar">
+    <span class="back" onclick="goTo('s-hub')">← Hub</span>
+    <span class="title">⚖️ Decision Challenge</span>
+  </div>
+
+  <div class="card scenario-box">
+    <p><strong>Situation:</strong> The regional authority controls the aquifer that feeds Kalahari Village's borehole. They offer to restore water flow on one condition — the village must agree to sell 30% of future water output to a neighbouring commercial farm at below-market rates for the next 10 years.</p>
+    <br>
+    <p>The village elder is uncertain. Some farmers support it (jobs!). Human-rights groups oppose it. Your team must decide.</p>
+  </div>
+
+  <div style="display:flex;gap:10px;flex-wrap:wrap">
+    <div class="resource"><span class="icon">💰</span> Budget: $3,500</div>
+    <div class="resource"><span class="icon">🤝</span> Community Trust: 72%</div>
+  </div>
+
+  <div class="decision-options">
+    <div class="decision-opt" id="opt-A" onclick="chooseDecision('A')">
+      <div class="opt-text">Option A — Accept the agreement</div>
+      <div class="opt-effects">✅ Water restored immediately. 🔴 Trust –15%, future water revenue –30%.</div>
+    </div>
+    <div class="decision-opt" id="opt-B" onclick="chooseDecision('B')">
+      <div class="opt-text">Option B — Negotiate a shorter 3-year term instead</div>
+      <div class="opt-effects">✅ Water restored after 2 turns. ✅ Trust +5%. Costs $400 in legal fees.</div>
+    </div>
+    <div class="decision-opt" id="opt-C" onclick="chooseDecision('C')">
+      <div class="opt-text">Option C — Reject and find an alternative water source</div>
+      <div class="opt-effects">⚠️ Delays by 3 turns. Costs $800. 🟢 Trust +20% if successful.</div>
+    </div>
+  </div>
+
+  <div class="consequence-banner" id="decision-banner"></div>
+
+  <button class="btn primary wide" id="decision-next-btn" style="display:none" onclick="completeDecision()">Confirm Decision →</button>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     SCREEN 7 – WATER SYSTEM BUILDER
+═════════════════════════════════════════════════════════════ -->
+<div id="s-builder" class="screen">
+  <div class="topbar">
+    <span class="back" onclick="goTo('s-hub')">← Hub</span>
+    <span class="title">🏗️ Build Distribution System</span>
+  </div>
+
+  <div class="build-stats">
+    <div class="build-stat">
+      <div class="bs-val" id="bs-budget">$3,500</div>
+      <div class="bs-lbl">Budget</div>
+    </div>
+    <div class="build-stat">
+      <div class="bs-val" id="bs-coverage" style="color:var(--danger)">0%</div>
+      <div class="bs-lbl">Coverage</div>
+    </div>
+    <div class="build-stat">
+      <div class="bs-val" id="bs-capacity">0</div>
+      <div class="bs-lbl">Capacity (ppl)</div>
+    </div>
+    <div class="build-stat">
+      <div class="bs-val" id="bs-placed">0 / 6</div>
+      <div class="bs-lbl">Components</div>
+    </div>
+  </div>
+
+  <div class="builder-layout">
+    <div class="component-palette">
+      <div style="font-size:.8rem;font-weight:700;color:var(--muted);margin-bottom:4px">COMPONENTS</div>
+      <div class="palette-item" onclick="selectComponent('pump','💧 Pump','$400',800)">
+        <span class="comp-icon">💧</span>
+        <div>Water Pump</div>
+        <div class="comp-cost">$400 · 800 ppl cap</div>
+      </div>
+      <div class="palette-item" onclick="selectComponent('tank','🪣 Tank','$250',600)">
+        <span class="comp-icon">🪣</span>
+        <div>Storage Tank</div>
+        <div class="comp-cost">$250 · 600 ppl cap</div>
+      </div>
+      <div class="palette-item" onclick="selectComponent('pipe','🔗 Pipe','$150',0)">
+        <span class="comp-icon">🔗</span>
+        <div>Pipe Section</div>
+        <div class="comp-cost">$150 · connects nodes</div>
+      </div>
+      <div class="palette-item" onclick="selectComponent('tap','🚰 Tap','$200',400)">
+        <span class="comp-icon">🚰</span>
+        <div>Tap Stand</div>
+        <div class="comp-cost">$200 · 400 ppl served</div>
+      </div>
+      <div class="palette-item" onclick="selectComponent('filter','🧪 Filter','$350',0)">
+        <span class="comp-icon">🧪</span>
+        <div>Filter Unit</div>
+        <div class="comp-cost">$350 · improves quality</div>
+      </div>
+    </div>
+
+    <div class="build-canvas" id="build-canvas"></div>
+  </div>
+
+  <div class="card" style="padding:10px 14px">
+    <p id="builder-hint" style="font-size:.85rem">Select a component from the palette, then click a grid slot to place it. You need to serve ≥ 2,400 people to complete the mission.</p>
+  </div>
+
+  <button class="btn primary wide" id="builder-next-btn" style="display:none" onclick="completeBuilder()">Submit System Design →</button>
+  <button class="btn wide" id="builder-check-btn" onclick="checkBuilder()">Check Coverage</button>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     SCREEN 8 – MISSION RESULTS
+═════════════════════════════════════════════════════════════ -->
+<div id="s-results" class="screen">
+  <div class="topbar">
+    <span class="title">🏆 Mission Complete!</span>
+  </div>
+
+  <div class="card result-score">
+    <div class="score-num" id="result-total">310</div>
+    <div class="score-lbl">points earned this mission</div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-bottom:12px">Score Breakdown</h3>
+    <div class="breakdown">
+      <div class="breakdown-row">
+        <span class="br-icon">🔩</span>
+        <span class="br-label">Pipe Puzzle — Solved in 4 moves</span>
+        <span class="br-points" id="br-puzzle">+100 pts</span>
+      </div>
+      <div class="breakdown-row">
+        <span class="br-icon">⚖️</span>
+        <span class="br-label">Decision — Negotiated 3-year term</span>
+        <span class="br-points" id="br-decision">+120 pts</span>
+      </div>
+      <div class="breakdown-row">
+        <span class="br-icon">🏗️</span>
+        <span class="br-label">Build — 2,600 people covered</span>
+        <span class="br-points" id="br-build">+130 pts</span>
+      </div>
+      <div class="breakdown-row" style="border-top:1.5px solid var(--border);padding-top:8px;margin-top:4px">
+        <span class="br-icon">⚡</span>
+        <span class="br-label">Speed Bonus (2 turns remaining)</span>
+        <span class="br-points">+40 pts</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-bottom:10px">Community Impact</h3>
+    <div class="stat-row">
+      <div class="stat-box">
+        <div class="stat-val" style="color:var(--success)">2,600</div>
+        <div class="stat-lbl">People with clean water</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val" style="color:var(--success)">–74%</div>
+        <div class="stat-lbl">Waterborne disease</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val">3.2 hrs</div>
+        <div class="stat-lbl">Saved daily per household</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <button class="btn wide" style="flex:1" onclick="goTo('s-world')">🌍 Back to World Map</button>
+    <button class="btn primary wide" style="flex:1" onclick="goTo('s-progress')">📊 View Impact →</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     SCREEN 9 – WORLD PROGRESS / IMPACT
+═════════════════════════════════════════════════════════════ -->
+<div id="s-progress" class="screen">
+  <div class="topbar">
+    <span class="back" onclick="goTo('s-world')">← Map</span>
+    <span class="title">📊 World Impact</span>
+  </div>
+
+  <div class="impact-grid">
+    <div class="impact-card">
+      <div class="ic-icon">💧</div>
+      <div class="ic-val" style="color:var(--accent)">4,800</div>
+      <div class="ic-lbl">People with clean water</div>
+    </div>
+    <div class="impact-card">
+      <div class="ic-icon">🌍</div>
+      <div class="ic-val">2</div>
+      <div class="ic-lbl">Missions completed</div>
+    </div>
+    <div class="impact-card">
+      <div class="ic-icon">🏗️</div>
+      <div class="ic-val">7</div>
+      <div class="ic-lbl">Systems built</div>
+    </div>
+    <div class="impact-card">
+      <div class="ic-icon">⭐</div>
+      <div class="ic-val" style="color:var(--warn)">1,690</div>
+      <div class="ic-lbl">Total points</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-bottom:10px">Global Progress</h3>
+    <div style="margin-bottom:6px;font-size:.85rem;color:var(--muted)">Communities helped: 2 / 6</div>
+    <div class="progress-bar-wrap" style="height:16px">
+      <div class="progress-bar-fill" style="width:33%"></div>
+    </div>
+    <div style="margin-top:10px;margin-bottom:6px;font-size:.85rem;color:var(--muted)">Next unlock at 3,000 pts — Pacific Atoll</div>
+    <div class="progress-bar-wrap" style="height:10px">
+      <div class="progress-bar-fill" style="width:56%;background:var(--warn)"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-bottom:10px">Leaderboard</h3>
+    <div class="leaderboard">
+      <div class="lb-row">
+        <span class="lb-rank">1</span>
+        <span class="lb-name">TeamHydro</span>
+        <span class="lb-score">3,240 pts</span>
+        <span class="lb-badge">🥇</span>
+      </div>
+      <div class="lb-row">
+        <span class="lb-rank">2</span>
+        <span class="lb-name">WaterWizards</span>
+        <span class="lb-score">2,810 pts</span>
+        <span class="lb-badge">🥈</span>
+      </div>
+      <div class="lb-row you">
+        <span class="lb-rank">3</span>
+        <span class="lb-name">Alex (You) 👤</span>
+        <span class="lb-score">1,690 pts</span>
+        <span class="lb-badge">🥉</span>
+      </div>
+      <div class="lb-row">
+        <span class="lb-rank">4</span>
+        <span class="lb-name">AquaCrew</span>
+        <span class="lb-score">1,420 pts</span>
+        <span class="lb-badge"></span>
+      </div>
+      <div class="lb-row">
+        <span class="lb-rank">5</span>
+        <span class="lb-name">StreamTeam</span>
+        <span class="lb-score">990 pts</span>
+        <span class="lb-badge"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <button class="btn wide" style="flex:1" onclick="goTo('s-world')">🌍 Continue Playing</button>
+    <button class="btn wide" style="flex:1" onclick="goTo('s-home')">🏠 Main Menu</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     MODAL – HOW TO PLAY
+═════════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-how" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <h2>💧 How to Play Drop Quest</h2>
+    <ol>
+      <li><strong>Choose your role</strong> — Engineer, Diplomat, Scientist, or Logistics. Each has unique abilities.</li>
+      <li><strong>Pick a community</strong> on the world map. Red communities are in crisis — prioritise them!</li>
+      <li><strong>Complete 3 challenges</strong> per mission:
+        <br>🔩 <em>Pipe Puzzle</em> — rotate pieces to connect water flow
+        <br>⚖️ <em>Decision</em> — choose how to handle political/social issues
+        <br>🏗️ <em>Builder</em> — design a water distribution system</li>
+      <li><strong>Earn points</strong> and unlock new communities. Collaborate with teammates for bonus multipliers.</li>
+      <li><strong>Track your impact</strong> — see how many people gained access to clean water.</li>
+    </ol>
+    <button class="btn close-btn wide" onclick="closeModal('modal-how')">Got it! Let's play →</button>
+  </div>
+</div>
+
+<!-- Toast notification -->
+<div id="toast"></div>
+
+<script>
+  /* ── State ──────────────────────────────────────────────────────── */
+  const state = {
+    playerName: 'Alex',
+    role: 'engineer',
+    difficulty: 'easy',
+    funds: 8200,
+    parts: 42,
+    score: 1340,
+    missionFunds: 3500,
+    missionScore: 0,
+    challenges: { puzzle: false, decision: false, build: false },
+    selectedComponent: null,
+    builderBudget: 3500,
+    builderCoverage: 0,
+    builderCapacity: 0,
+    builderPlaced: 0,
+    decisionChoice: null,
+    puzzleMoves: 0,
+    puzzleSolved: false,
+  };
+
+  const communities = [
+    { name: 'Kalahari Village', region: 'Sub-Saharan Africa · Population ~2,400', icon: '🏜️', crisis: '88%', pop: '2,400', budget: '$3,500', time: '6 turns', desc: 'Drought conditions have reduced the village\'s only borehole to near-zero output. Women walk 14 km daily to collect contaminated water. Waterborne disease rates have tripled in 6 months.' },
+    { name: 'Andean Pueblo', region: 'South America · Population ~1,800', icon: '⛰️', crisis: '55%', pop: '1,800', budget: '$2,800', time: '8 turns', desc: 'Glacial melt and population growth have overwhelmed the existing spring-fed aqueduct. The pueblo needs modern filtration and a reliable pipe network.' },
+    { name: 'Mekong Delta', region: 'Southeast Asia · Population ~5,100', icon: '🌾', crisis: '10%', pop: '5,100', budget: '$0', time: '—', desc: 'Mission completed! Clean water now serves 5,100 residents. This community was your first success.' },
+    { name: 'Hindu Kush Camp', region: 'Central Asia · Population ~900', icon: '🏔️', crisis: '72%', pop: '900', budget: '$2,200', time: '5 turns', desc: 'A refugee settlement with no permanent infrastructure. Snowmelt provides seasonal water but the camp needs year-round supply and sanitation systems.' },
+  ];
+
+  let currentCommunity = 0;
+
+  /* ── Navigation ─────────────────────────────────────────────────── */
+  function goTo(screenId) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(screenId).classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    if (screenId === 's-hub') renderHub();
+    if (screenId === 's-puzzle' && !state.puzzleSolved) initPuzzle();
+    if (screenId === 's-builder') initBuilder();
+    if (screenId === 's-results') renderResults();
+  }
+
+  /* ── Setup screen ───────────────────────────────────────────────── */
+  function selectRole(role) {
+    state.role = role;
+    document.querySelectorAll('.role-card').forEach(c => c.classList.remove('selected'));
+    document.getElementById('role-' + role).classList.add('selected');
+  }
+
+  function selectDiff(diff) {
+    state.difficulty = diff;
+    ['easy','normal','hard'].forEach(d => {
+      const btn = document.getElementById('diff-' + d);
+      btn.style.background = '';
+      btn.style.borderColor = '';
+      btn.style.color = '';
+    });
+    const btn = document.getElementById('diff-' + diff);
+    btn.style.background = 'var(--accent-lt)';
+    btn.style.borderColor = 'var(--accent)';
+    btn.style.color = 'var(--accent)';
+  }
+
+  function startGame() {
+    state.playerName = document.getElementById('player-name').value || 'Alex';
+    goTo('s-world');
+    toast('Welcome, ' + state.playerName + '! Choose a community to begin.');
+  }
+
+  /* ── World map ──────────────────────────────────────────────────── */
+  function selectCommunity(idx) {
+    currentCommunity = idx;
+    const c = communities[idx];
+    document.getElementById('brief-title').textContent = c.name;
+    document.getElementById('brief-icon').textContent = c.icon;
+    document.getElementById('brief-name').textContent = c.name;
+    document.getElementById('brief-region').textContent = c.region;
+    document.getElementById('brief-desc').textContent = c.desc;
+    document.getElementById('brief-pop').textContent = c.pop;
+    document.getElementById('brief-crisis').textContent = c.crisis;
+    document.getElementById('brief-budget').textContent = c.budget;
+    document.getElementById('brief-time').textContent = c.time;
+    document.getElementById('hub-title').textContent = c.name;
+
+    // Reset mission state for fresh selection
+    state.challenges = { puzzle: false, decision: false, build: false };
+    state.missionScore = 0;
+    state.puzzleSolved = false;
+    state.puzzleMoves = 0;
+    state.decisionChoice = null;
+    state.builderBudget = parseInt(c.budget.replace(/\D/g,'')) || 3500;
+    state.builderCoverage = 0;
+    state.builderCapacity = 0;
+    state.builderPlaced = 0;
+
+    goTo('s-brief');
+  }
+
+  /* ── Mission hub ────────────────────────────────────────────────── */
+  function renderHub() {
+    const done = Object.values(state.challenges).filter(Boolean).length;
+    document.getElementById('hub-progress').style.width = (done / 3 * 100) + '%';
+    document.getElementById('hub-pts').textContent = state.missionScore + ' / 350 pts';
+
+    const ids = { puzzle: 'ch-puzzle', decision: 'ch-decision', build: 'ch-build' };
+    Object.entries(state.challenges).forEach(([k, v]) => {
+      const el = document.getElementById(ids[k]);
+      if (v) {
+        el.classList.add('done');
+        el.querySelector('.challenge-reward').textContent = '✅ Done';
+        el.onclick = null;
+      }
+    });
+
+    if (done === 3) {
+      setTimeout(() => goTo('s-results'), 400);
+    }
+  }
+
+  /* ── Pipe Puzzle ────────────────────────────────────────────────── */
+  // 5x5 grid. Each cell has a pipe type (rotation cycles through variants).
+  const PIPES = ['╠','╦','╔','╬','░']; // horizontal, vertical, corner, cross, empty
+  // Minimum number of rotations the player must make before a win can be registered,
+  // preventing an accidental instant-win on the pre-filled default layout.
+  const MIN_PUZZLE_MOVES = 2;
+
+  let puzzleGrid = [];
+
+  function initPuzzle() {
+    state.puzzleMoves = 0;
+    state.puzzleSolved = false;
+    document.getElementById('puzzle-moves').textContent = 'Moves: 0 / 5';
+    document.getElementById('puzzle-feedback').style.display = 'none';
+    document.getElementById('puzzle-next-btn').style.display = 'none';
+
+    // Pre-set grid: row x col, types from PIPES index
+    const layout = [
+      [4,4,4,4,4],
+      [4,2,3,2,4],
+      [0,3,4,3,1],
+      [4,2,3,2,4],
+      [4,4,4,4,4],
+    ];
+    puzzleGrid = layout.map(row => row.map(t => ({ type: t, correct: false })));
+    // Mark source and sink
+    puzzleGrid[2][0].isSource = true;
+    puzzleGrid[2][4].isSink   = true;
+    renderPipeGrid();
+  }
+
+  function renderPipeGrid() {
+    const container = document.getElementById('pipe-grid');
+    container.innerHTML = '';
+    puzzleGrid.forEach((row, r) => {
+      row.forEach((cell, c) => {
+        const el = document.createElement('div');
+        el.className = 'pipe-cell';
+        if (cell.isSource) { el.classList.add('source'); el.textContent = '💧'; }
+        else if (cell.isSink) { el.classList.add('sink'); el.textContent = '⛏'; }
+        else {
+          el.textContent = PIPES[cell.type];
+          el.onclick = () => rotatePipe(r, c);
+        }
+        if (cell.correct) el.classList.add('correct');
+        container.appendChild(el);
+      });
+    });
+  }
+
+  function rotatePipe(r, c) {
+    if (state.puzzleSolved) return;
+    if (state.puzzleMoves >= 5) { toast('No moves remaining! Reset to try again.'); return; }
+    const cell = puzzleGrid[r][c];
+    if (cell.isSource || cell.isSink) return;
+    // Cycle through useful pipe types (skip empty)
+    cell.type = (cell.type + 1) % 4;
+    state.puzzleMoves++;
+    document.getElementById('puzzle-moves').textContent = 'Moves: ' + state.puzzleMoves + ' / 5';
+
+    // Simple win check: if middle row all non-empty → solved
+    const midRow = puzzleGrid[2];
+    const allFilled = midRow.every(cell => cell.isSource || cell.isSink || cell.type !== 4);
+    if (allFilled && state.puzzleMoves >= MIN_PUZZLE_MOVES) {
+      midRow.forEach(cell => { cell.correct = true; });
+      state.puzzleSolved = true;
+      renderPipeGrid();
+      document.getElementById('puzzle-feedback').style.display = 'block';
+      document.getElementById('puzzle-msg').textContent = '🎉 Water is flowing! Puzzle complete.';
+      document.getElementById('puzzle-next-btn').style.display = 'inline-block';
+      toast('Pipe puzzle solved! +100 pts');
+    } else {
+      renderPipeGrid();
+    }
+  }
+
+  function resetPuzzle() {
+    initPuzzle();
+    toast('Puzzle reset.');
+  }
+
+  function completePuzzle() {
+    if (!state.puzzleSolved) { toast('Solve the puzzle first!'); return; }
+    state.challenges.puzzle = true;
+    state.missionScore += 100;
+    goTo('s-hub');
+    toast('Puzzle complete! +100 pts');
+  }
+
+  /* ── Decision Challenge ─────────────────────────────────────────── */
+  function chooseDecision(opt) {
+    ['A','B','C'].forEach(o => {
+      const el = document.getElementById('opt-' + o);
+      el.classList.remove('selected-good', 'selected-bad');
+    });
+    state.decisionChoice = opt;
+    const el = document.getElementById('opt-' + opt);
+    const banner = document.getElementById('decision-banner');
+    banner.className = 'consequence-banner';
+
+    if (opt === 'A') {
+      el.classList.add('selected-bad');
+      banner.classList.add('bad');
+      banner.textContent = '⚠️ Accepted unfair terms. Water flows immediately but community loses long-term income.';
+    } else if (opt === 'B') {
+      el.classList.add('selected-good');
+      banner.classList.add('good');
+      banner.textContent = '✅ Good negotiation! Trust increases and the village keeps most of its water rights.';
+    } else {
+      el.classList.add('selected-good');
+      banner.classList.add('good');
+      banner.textContent = '✅ Bold choice! This will take longer but gives the village full autonomy.';
+    }
+
+    document.getElementById('decision-next-btn').style.display = 'block';
+  }
+
+  // Points awarded per decision choice (A = unfavourable, B = best outcome, C = bold)
+  const DECISION_POINTS = { A: 80, B: 120, C: 100 };
+
+  function completeDecision() {
+    state.challenges.decision = true;
+    const pts = DECISION_POINTS[state.decisionChoice] ?? 80;
+    state.missionScore += pts;
+    goTo('s-hub');
+    toast('Decision made! +' + pts + ' pts');
+  }
+
+  /* ── Water System Builder ───────────────────────────────────────── */
+  const COMPONENTS = {
+    pump:   { icon: '💧', name: 'Pump',   cost: 400, capacity: 800 },
+    tank:   { icon: '🪣', name: 'Tank',   cost: 250, capacity: 600 },
+    pipe:   { icon: '🔗', name: 'Pipe',   cost: 150, capacity: 0 },
+    tap:    { icon: '🚰', name: 'Tap',    cost: 200, capacity: 400 },
+    filter: { icon: '🧪', name: 'Filter', cost: 350, capacity: 0 },
+  };
+
+  let canvasSlots = [];
+
+  function initBuilder() {
+    state.builderBudget = communities[currentCommunity]
+      ? (parseInt(communities[currentCommunity].budget.replace(/\D/g,'')) || 3500) : 3500;
+    state.builderCapacity = 0;
+    state.builderCoverage = 0;
+    state.builderPlaced = 0;
+    state.selectedComponent = null;
+    canvasSlots = Array(16).fill(null);
+    renderBuilderCanvas();
+    updateBuilderStats();
+    document.getElementById('builder-next-btn').style.display = 'none';
+    document.getElementById('builder-hint').textContent = 'Select a component from the palette, then click a grid slot to place it. You need to serve ≥ 2,400 people to complete the mission.';
+  }
+
+  function selectComponent(type, label, cost, cap) {
+    state.selectedComponent = type;
+    toast(label + ' selected (' + cost + '). Click a grid slot to place.');
+  }
+
+  function renderBuilderCanvas() {
+    const canvas = document.getElementById('build-canvas');
+    canvas.innerHTML = '';
+    canvasSlots.forEach((comp, i) => {
+      const slot = document.createElement('div');
+      slot.className = 'canvas-slot' + (comp ? ' placed' : '');
+      if (comp) {
+        slot.innerHTML = '<span>' + COMPONENTS[comp].icon + '</span><span class="slot-label">' + COMPONENTS[comp].name + '</span>';
+      } else {
+        slot.onclick = () => placeComponent(i);
+        slot.innerHTML = '<span style="color:#ccc;font-size:.8rem">+ place</span>';
+      }
+      canvas.appendChild(slot);
+    });
+  }
+
+  function placeComponent(slotIdx) {
+    if (!state.selectedComponent) { toast('Select a component first!'); return; }
+    const comp = COMPONENTS[state.selectedComponent];
+    if (state.builderBudget < comp.cost) { toast('Not enough budget!'); return; }
+
+    canvasSlots[slotIdx] = state.selectedComponent;
+    state.builderBudget -= comp.cost;
+    state.builderCapacity += comp.capacity;
+    state.builderPlaced++;
+    state.selectedComponent = null;
+    renderBuilderCanvas();
+    updateBuilderStats();
+    toast(comp.icon + ' ' + comp.name + ' placed! –$' + comp.cost);
+  }
+
+  function updateBuilderStats() {
+    const pop = parseInt((communities[currentCommunity]?.pop ?? '2400').replace(/,/g, '')) || 2400;
+    const coverage = Math.min(100, Math.round(state.builderCapacity / pop * 100));
+    state.builderCoverage = coverage;
+
+    document.getElementById('bs-budget').textContent = '$' + state.builderBudget.toLocaleString();
+    document.getElementById('bs-coverage').textContent = coverage + '%';
+    document.getElementById('bs-coverage').style.color = coverage >= 100 ? 'var(--success)' : coverage > 60 ? 'var(--warn)' : 'var(--danger)';
+    document.getElementById('bs-capacity').textContent = state.builderCapacity.toLocaleString();
+    document.getElementById('bs-placed').textContent = state.builderPlaced + ' / 6';
+  }
+
+  function checkBuilder() {
+    if (state.builderCoverage >= 100) {
+      document.getElementById('builder-hint').textContent = '✅ Coverage ≥ 100%! You\'ve built enough capacity to serve the community. Submit your design.';
+      document.getElementById('builder-next-btn').style.display = 'block';
+      document.getElementById('builder-check-btn').style.display = 'none';
+      toast('System ready! Coverage: ' + state.builderCoverage + '%');
+    } else {
+      document.getElementById('builder-hint').textContent = '⚠️ Current coverage: ' + state.builderCoverage + '%. You need at least 100% (2,400 people). Add more pumps or tap stands.';
+      toast('Need more coverage — currently ' + state.builderCoverage + '%');
+    }
+  }
+
+  function completeBuilder() {
+    state.challenges.build = true;
+    state.missionScore += 130;
+    goTo('s-hub');
+    toast('System built! +130 pts');
+  }
+
+  /* ── Results ────────────────────────────────────────────────────── */
+  function renderResults() {
+    document.getElementById('result-total').textContent = state.missionScore + 40;
+    document.getElementById('br-puzzle').textContent = state.challenges.puzzle ? '+100 pts' : '+0 pts';
+    document.getElementById('br-decision').textContent = state.challenges.decision ? (state.decisionChoice === 'A' ? '+80 pts' : '+120 pts') : '+0 pts';
+    document.getElementById('br-build').textContent = state.challenges.build ? '+130 pts' : '+0 pts';
+  }
+
+  /* ── Modal ──────────────────────────────────────────────────────── */
+  function openModal(id)  { document.getElementById(id).classList.add('open'); }
+  function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+  function closeModalOutside(e) { if (e.target.classList.contains('modal-overlay')) e.target.classList.remove('open'); }
+
+  /* ── Toast ──────────────────────────────────────────────────────── */
+  let toastTimer;
+  function toast(msg) {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => el.classList.remove('show'), 2400);
+  }
+
+  /* ── Init ───────────────────────────────────────────────────────── */
+  selectDiff('easy');
+</script>
+</body>
+</html>
